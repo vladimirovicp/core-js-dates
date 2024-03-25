@@ -238,8 +238,8 @@ function getNextFridayThe13th(date) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  return Math.ceil((date.getMonth() + 1) / 3);
 }
 
 /**
@@ -260,8 +260,23 @@ function getQuarter(/* date */) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  let schedule = [];
+  const currentDay = new Date(period.start.split('-').reverse().join('-'));
+  const lastDay = new Date(period.end.split('-').reverse().join('-'));
+  const dayInSeconds = 3600 * 24 * 1000;
+  while (currentDay.getTime() <= lastDay.getTime()) {
+    schedule.push(
+      `${currentDay.getDate().toString().padStart(2, '0')}-${(currentDay.getMonth() + 1).toString().padStart(2, '0')}-${currentDay.getFullYear()}`
+    );
+    currentDay.setTime(currentDay.getTime() + dayInSeconds);
+  }
+  schedule = schedule.filter(
+    (a, i) =>
+      (i + 1) % (countWorkDays + countOffDays) <= countWorkDays &&
+      (i + 1) % (countWorkDays + countOffDays) !== 0
+  );
+  return schedule;
 }
 
 /**
@@ -276,8 +291,9 @@ function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
  * Date(2022, 2, 1) => false
  * Date(2020, 2, 1) => true
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const year = new Date(date).getFullYear();
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
 module.exports = {
